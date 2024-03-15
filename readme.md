@@ -1,4 +1,4 @@
-# Aplicación de Detección de Objetos
+# Aplicación de detencion movimiento
 
 Este módulo contiene la implementación de una aplicación de detección de movimiento que utiliza OpenCV y Tkinter.
 
