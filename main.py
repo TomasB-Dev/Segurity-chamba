@@ -1,3 +1,6 @@
+"""
+    Deteccion de movimiento y captura del mismo
+"""
 import os
 from datetime import datetime
 import winsound
@@ -36,16 +39,26 @@ class ObjectDetectionApp:
         self.control_frame = tk.Frame(self.root, bg="black")
         self.control_frame.pack(fill=tk.X)
 
-        self.search_cameras_button = tk.Button(self.control_frame, text="Buscar Más Cámaras", command=self.search_cameras)
+        self.search_cameras_button = tk.Button(
+        self.control_frame, text="Buscar Más Cámaras", command=self.search_cameras
+        )
         self.search_cameras_button.pack(side=tk.LEFT, padx=5, pady=5)
 
-        self.start_button = tk.Button(self.control_frame, text="Start Detection", bg="green2", command=self.start_detection, state=tk.DISABLED)
+        self.start_button = tk.Button(
+            self.control_frame, text="Start Detection", bg="green2",
+            command=self.start_detection, state=tk.DISABLED
+        )
         self.start_button.pack(side=tk.LEFT, padx=5, pady=5)
 
-        self.stop_button = tk.Button(self.control_frame, text="Stop Detection", bg="red", command=self.stop_detection, state=tk.DISABLED)
+        self.stop_button = tk.Button(
+            self.control_frame, text="Stop Detection", bg="red",
+            command=self.stop_detection, state=tk.DISABLED
+        )
         self.stop_button.pack(side=tk.LEFT, padx=5, pady=5)
 
-        self.view_captures_button = tk.Button(self.control_frame, text="View Captures", command=self.view_captures)
+        self.view_captures_button = tk.Button(
+            self.control_frame, text="View Captures", command=self.view_captures
+        )
         self.view_captures_button.pack(side=tk.LEFT, padx=5, pady=5)
 
         self.update_video()
@@ -68,11 +81,17 @@ class ObjectDetectionApp:
                     self.stop_button.config(state=tk.DISABLED)
                     self.view_captures_button.config(state=tk.NORMAL)
                 else:
-                    camera_frame = tk.Label(self.top_camera_frame, text="Cámara no encontrada", bg="blue", fg="white", width=60, height=15, relief=tk.SUNKEN, borderwidth=2)
+                    camera_frame = tk.Label(self.top_camera_frame,
+                        text="Cámara no encontrada", bg="blue", fg="white", width=60, height=15,
+                        relief=tk.SUNKEN, borderwidth=2)
                     if i < 2:
-                        camera_frame = tk.Label(self.top_camera_frame, text="Cámara no encontrada", bg="blue", fg="white", width=60, height=15, relief=tk.SUNKEN, borderwidth=2)
+                        camera_frame = tk.Label(self.top_camera_frame,
+                            text="Cámara no encontrada", bg="blue", fg="white", width=60, height=15,
+                            relief=tk.SUNKEN, borderwidth=2)
                     else:
-                        camera_frame = tk.Label(self.bottom_camera_frame, text="Cámara no encontrada", bg="blue", fg="white", width=60, height=15, relief=tk.SUNKEN, borderwidth=2)
+                        camera_frame = tk.Label(self.bottom_camera_frame,
+                            text="Cámara no encontrada", bg="blue", fg="white",
+                            width=60, height=15, relief=tk.SUNKEN, borderwidth=2)
                     camera_frame.pack(side=tk.LEFT, padx=5, pady=5)
                     self.cameras.append((None, camera_frame))
         else:
@@ -111,7 +130,8 @@ class ObjectDetectionApp:
 
     def detect_objects(self, frame):
         """
-            Detecta objetos en el marco dado utilizando sustracción de fondo y detección de contornos.
+            Detecta objetos en el marco dado utilizando
+            sustracción de fondo y detección de contornos.
 
             Args:
             frame: El marco de entrada del flujo de video.
@@ -132,17 +152,20 @@ class ObjectDetectionApp:
             x, y, w, h = cv2.boundingRect(contour)
             now = datetime.now()
 
-            #  verifica si un objeto detectado con las coordenadas `(x, y,
-            # w, h)` ha sido detectado previamente dentro de un cierto período de tiempo especificado por
+            #  verifica si un objeto
+            # detectado con las coordenadas `(x, y,
+            # w, h)` ha sido detectado previamente
+            # dentro de un cierto período de tiempo
+            # especificado por
             # `self.ignore_time`.
             if (x, y, w, h) in self.detected_objects:
                 last_detected_time = self.detected_objects[(x, y, w, h)]
                 time_difference = (now - last_detected_time).total_seconds()
                 if time_difference < self.ignore_time:
                     continue
-
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            cv2.imwrite(os.path.join(self.output_directory, f"nuevo_objeto_{self.image_count}.jpg"), frame)
+            cv2.imwrite(os.path.join(self.output_directory,
+                f"nuevo_objeto_{self.image_count}.jpg"), frame)
             self.image_count += 1
             self.detected_objects[(x, y, w, h)] = now
             # Reproducir sonido cuando se detecte movimiento
@@ -159,10 +182,12 @@ class ObjectDetectionApp:
 
     def update_video(self):
         """
-            Actualiza continuamente el marco de video mostrado en la interfaz de usuario.
-    
-            Captura un nuevo fotograma del video en vivo y lo muestra en el widget de la interfaz gráfica de usuario.
-            Si la detección de objetos está activada, también se ejecuta el método detect_objects para buscar objetos en el fotograma.
+            Actualiza continuamente el marco de video
+            mostrado en la interfaz de usuario.  
+            Captura un nuevo fotograma del video en vivo y
+            lo muestra en el widget de la interfaz gráfica de usuario.
+            Si la detección de objetos está activada,
+            también se ejecuta el método detect_objects para buscar objetos en el fotograma.
         """
         for cap, camera_frame in self.cameras:
             if cap is not None:
