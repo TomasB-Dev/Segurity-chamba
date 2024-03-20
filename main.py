@@ -5,6 +5,7 @@ import os
 from datetime import datetime
 import winsound
 import tkinter as tk
+import webbrowser
 import cv2
 
 # pylint: disable=no-member
@@ -15,6 +16,7 @@ class ObjectDetectionApp:
         self.root = root
         self.root.title("Segurity Chamba")
         self.root.geometry("825x520")
+        self.root.iconbitmap("icono.ico")
 
         self.detector_on = False
         self.output_directory = "nuevos_objetos"
@@ -40,28 +42,80 @@ class ObjectDetectionApp:
         self.control_frame.pack(fill=tk.X)
 
         self.search_cameras_button = tk.Button(
-        self.control_frame, text="Buscar Más Cámaras", command=self.search_cameras
+        self.control_frame, text="Buscar Más Cámaras",
+        foreground="black",
+        activebackground="blue",
+        activeforeground="red",
+        highlightthickness=2,
+        highlightbackground="green",
+        highlightcolor="white",
+        cursor="circle",
+        font=('Arial',11),
+        command=self.search_cameras
         )
         self.search_cameras_button.pack(side=tk.LEFT, padx=5, pady=5)
 
         self.start_button = tk.Button(
-            self.control_frame, text="Start Detection", bg="green2",
+            self.control_frame, text="Iniciar Deteccion", bg="green2",
+            foreground="black",
+            activebackground="blue",
+            activeforeground="red",
+            highlightthickness=2,
+            highlightbackground="green",
+            highlightcolor="white",
+            cursor="hand2",
+            font=('Arial',10),
             command=self.start_detection, state=tk.DISABLED
         )
         self.start_button.pack(side=tk.LEFT, padx=5, pady=5)
 
         self.stop_button = tk.Button(
-            self.control_frame, text="Stop Detection", bg="red",
+            self.control_frame, text="Detener Deteccion", bg="red",
+            foreground="black",
+            activebackground="blue",
+            activeforeground="red",
+            highlightthickness=2,
+            highlightbackground="green",
+            highlightcolor="white",
+            cursor="hand2",
+            font=('Arial',10),
             command=self.stop_detection, state=tk.DISABLED
         )
         self.stop_button.pack(side=tk.LEFT, padx=5, pady=5)
 
         self.view_captures_button = tk.Button(
-            self.control_frame, text="View Captures", command=self.view_captures
+            self.control_frame, text="View Captures",
+            foreground="black",
+            activebackground="blue",
+            activeforeground="red",
+            highlightthickness=2,
+            highlightbackground="green",
+            highlightcolor="white",
+            cursor="hand2",
+            font=('Arial',10),
+            command=self.view_captures
         )
         self.view_captures_button.pack(side=tk.LEFT, padx=5, pady=5)
+        self.link_button = tk.Button(
+            self.control_frame, text="Contacto",
+            foreground="black",
+            activebackground="blue",
+            activeforeground="red",
+            highlightthickness=2,
+            highlightbackground="green",
+            highlightcolor="white",
+            cursor="hand2",
+            font=('Arial',10),
+            command=self.open_link
+        )
+        self.link_button.pack(side=tk.LEFT, padx=5, pady=5)
 
         self.update_video()
+    def open_link(self):
+        """
+            invitacion al discord
+        """
+        webbrowser.open("https://discord.gg/6kfbMJXKRy")
 
     def search_cameras(self):
         """Buscar y mostrar cámaras disponibles."""
