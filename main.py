@@ -7,24 +7,13 @@ import winsound
 import tkinter as tk
 import webbrowser
 import cv2
+from PIL import Image, ImageTk
 
 # pylint: disable=no-member
 class ObjectDetectionApp:
     """Clase para la aplicación de detección de objetos."""
     def __init__(self, root):
-        """
-        La función inicializa una aplicación de seguridad con marcos de cámara,
-        botones de control y
-        resta de fondo para la detección de objetos.
-        
-        :param root: El parámetro `root` en el método `__init__`
-        de su código parece referirse al
-        ventana principal de Tkinter o ventana raíz de su aplicación. 
-        Es donde están todos los widgets y marcos.
-        se colocan y se muestran. En el código, está configurando el título,
-        la geometría y el ícono
-        Inicializa la aplicación.
-        """
+        """Inicializa la aplicación."""
         self.root = root
         self.root.title("Segurity Chamba")
         self.root.geometry("825x520")
@@ -40,13 +29,18 @@ class ObjectDetectionApp:
         self.detected_objects = {}
         self.ignore_time = 10
 
+        self.timer_running = False
+        self.start_time = None
+        self.record_duration = 30  # Duración de la grabación en segundos
+        self.video_writer = None
+        self.detector_on = False
+        self.is_recording = False
+
         self.cameras = []
 
-        # Frame para las cámaras superiores
         self.top_camera_frame = tk.Frame(self.root, bg="black")
         self.top_camera_frame.pack(fill=tk.X)
 
-        # Frame para las cámaras inferiores
         self.bottom_camera_frame = tk.Frame(self.root, bg="black")
         self.bottom_camera_frame.pack(fill=tk.X)
 
@@ -54,86 +48,41 @@ class ObjectDetectionApp:
         self.control_frame.pack(fill=tk.X)
 
         self.search_cameras_button = tk.Button(
-        self.control_frame, text="Buscar Más Cámaras",
-        foreground="black",
-        activebackground="blue",
-        activeforeground="red",
-        highlightthickness=2,
-        highlightbackground="green",
-        highlightcolor="white",
-        cursor="circle",
-        font=('Arial',11),
-        command=self.search_cameras
+            self.control_frame, text="Buscar Más Cámaras",
+            command=self.search_cameras
         )
         self.search_cameras_button.pack(side=tk.LEFT, padx=5, pady=5)
 
         self.start_button = tk.Button(
             self.control_frame, text="Iniciar Deteccion", bg="green2",
-            foreground="black",
-            activebackground="blue",
-            activeforeground="red",
-            highlightthickness=2,
-            highlightbackground="green",
-            highlightcolor="white",
-            cursor="hand2",
-            font=('Arial',10),
             command=self.start_detection, state=tk.DISABLED
         )
         self.start_button.pack(side=tk.LEFT, padx=5, pady=5)
 
         self.stop_button = tk.Button(
             self.control_frame, text="Detener Deteccion", bg="red",
-            foreground="black",
-            activebackground="blue",
-            activeforeground="red",
-            highlightthickness=2,
-            highlightbackground="green",
-            highlightcolor="white",
-            cursor="hand2",
-            font=('Arial',10),
             command=self.stop_detection, state=tk.DISABLED
         )
         self.stop_button.pack(side=tk.LEFT, padx=5, pady=5)
 
         self.view_captures_button = tk.Button(
             self.control_frame, text="View Captures",
-            foreground="black",
-            activebackground="blue",
-            activeforeground="red",
-            highlightthickness=2,
-            highlightbackground="green",
-            highlightcolor="white",
-            cursor="hand2",
-            font=('Arial',10),
             command=self.view_captures
         )
         self.view_captures_button.pack(side=tk.LEFT, padx=5, pady=5)
         self.link_button = tk.Button(
             self.control_frame, text="Contacto",
-            foreground="black",
-            activebackground="blue",
-            activeforeground="red",
-            highlightthickness=2,
-            highlightbackground="green",
-            highlightcolor="white",
-            cursor="hand2",
-            font=('Arial',10),
             command=self.open_link
         )
         self.link_button.pack(side=tk.LEFT, padx=5, pady=5)
 
         self.update_video()
     def open_link(self):
-        """
-            invitacion al discord
-        """
+        """Abrir enlace."""
         webbrowser.open("https://discord.gg/6kfbMJXKRy")
 
     def search_cameras(self):
         """Buscar y mostrar cámaras disponibles."""
-        # El código  intenta inicializar hasta 4 transmisiones de cámara usando OpenCV en Python. Él
-        # itera sobre los índices de cámara 0 a 3, intenta capturar un cuadro de cada cámara, y si
-        # es exitoso, crea un widget de etiqueta Tkinter para mostrar la transmisión de la cámara.
         if not self.cameras:
             for i in range(4):
                 cap = cv2.VideoCapture(i)
@@ -151,16 +100,18 @@ class ObjectDetectionApp:
                     self.view_captures_button.config(state=tk.NORMAL)
                 else:
                     camera_frame = tk.Label(self.top_camera_frame,
-                        text="Cámara no encontrada", bg="blue", fg="white", width=60, height=15,
-                        relief=tk.SUNKEN, borderwidth=2)
+                                            text="Cámara no encontrada",
+                                            bg="blue", fg="white", width=60, height=15,
+                                            relief=tk.SUNKEN, borderwidth=2)
                     if i < 2:
                         camera_frame = tk.Label(self.top_camera_frame,
-                            text="Cámara no encontrada", bg="blue", fg="white", width=60, height=15,
-                            relief=tk.SUNKEN, borderwidth=2)
+                                                text="Cámara no encontrada",
+                                                bg="blue", fg="white", width=60, height=15,
+                                                relief=tk.SUNKEN, borderwidth=2)
                     else:
                         camera_frame = tk.Label(self.bottom_camera_frame,
-                            text="Cámara no encontrada", bg="blue", fg="white",
-                            width=60, height=15, relief=tk.SUNKEN, borderwidth=2)
+                                        text="Cámara no encontrada", bg="blue", fg="white",
+                                        width=60, height=15, relief=tk.SUNKEN, borderwidth=2)
                     camera_frame.pack(side=tk.LEFT, padx=5, pady=5)
                     self.cameras.append((None, camera_frame))
         else:
@@ -177,14 +128,9 @@ class ObjectDetectionApp:
 
     def show_camera(self, frame, camera_frame):
         """Mostrar el fotograma de la cámara en el marco."""
-        # Este bloque de código es responsable de convertir
-        #el fotograma capturado por la cámara a un
-        # formato que se puede mostrar en un widget de etiqueta Tkinter.
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame = cv2.resize(frame, (423, 227))
-        photo = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-        photo = cv2.cvtColor(photo, cv2.COLOR_BGR2RGB)
-        photo = tk.PhotoImage(data=cv2.imencode('.png', photo)[1].tobytes())
+        photo = ImageTk.PhotoImage(image=Image.fromarray(frame))
         camera_frame.config(image=photo)
         camera_frame.image = photo
 
@@ -193,23 +139,35 @@ class ObjectDetectionApp:
         self.detector_on = True
         self.start_button.config(state=tk.DISABLED)
         self.stop_button.config(state=tk.NORMAL)
+        self.timer_running = False
+        # Iniciar la grabación del video
+        frame_width = int(self.cameras[0][0].get(cv2.CAP_PROP_FRAME_WIDTH))
+        frame_height = int(self.cameras[0][0].get(cv2.CAP_PROP_FRAME_HEIGHT))
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        video_filename = f"video_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.avi"
+        video_path = os.path.join(self.output_directory, video_filename)
+        self.video_writer = cv2.VideoWriter(video_path, fourcc, 20.0, (frame_width, frame_height))
+        self.start_time = datetime.now()  # Registrar el tiempo de inicio de la grabación
 
     def stop_detection(self):
         """Detener la detección de objetos."""
         self.detector_on = False
         self.start_button.config(state=tk.NORMAL)
         self.stop_button.config(state=tk.DISABLED)
-
+        self.timer_running = False
+        if self.video_writer is not None:
+            self.video_writer.release()
+            self.video_writer = None
     def detect_objects(self, frame):
         """
-            Detecta objetos en el marco dado utilizando
-            sustracción de fondo y detección de contornos.
+        Detecta objetos en el marco dado utilizando
+        sustracción de fondo y detección de contornos.
 
-            Args:
-            frame: El marco de entrada del flujo de video.
+        Args:
+        frame: El marco de entrada del flujo de video.
 
-            Returns:
-            None
+        Returns:
+        None
         """
         fgmask = self.fgbg.apply(frame)
         fgmask = cv2.morphologyEx(fgmask, cv2.MORPH_OPEN, self.kernel)
@@ -224,42 +182,62 @@ class ObjectDetectionApp:
             x, y, w, h = cv2.boundingRect(contour)
             now = datetime.now()
 
-            #  verifica si un objeto
-            # detectado con las coordenadas `(x, y,
-            # w, h)` ha sido detectado previamente
-            # dentro de un cierto período de tiempo
-            # especificado por
-            # `self.ignore_time`.
             if (x, y, w, h) in self.detected_objects:
                 last_detected_time = self.detected_objects[(x, y, w, h)]
                 time_difference = (now - last_detected_time).total_seconds()
                 if time_difference < self.ignore_time:
                     continue
+
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
             cv2.imwrite(os.path.join(self.output_directory,
-                f"nuevo_objeto_{self.image_count}.jpg"), frame)
+                                    f"nuevo_objeto_{self.image_count}.jpg"), frame)
             self.image_count += 1
             self.detected_objects[(x, y, w, h)] = now
-            # Reproducir sonido cuando se detecte movimiento
             winsound.PlaySound("Alarma.wav", winsound.SND_ASYNC)
+
+            # Iniciar la grabación si no se está grabando actualmente
+            if not self.is_recording:
+                self.is_recording = True
+                frame_width = int(self.cameras[0][0].get(cv2.CAP_PROP_FRAME_WIDTH))
+                frame_height = int(self.cameras[0][0].get(cv2.CAP_PROP_FRAME_HEIGHT))
+                fourcc = cv2.VideoWriter_fourcc(*'XVID')
+                video_filename = f"video_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.avi"
+                video_path = os.path.join(self.output_directory, video_filename)
+                self.video_writer = cv2.VideoWriter(video_path, fourcc, 20.0, (frame_width, frame_height))
+                self.start_time = datetime.now()  # Registrar el tiempo de inicio de la grabación
+
+            # Continuar grabando mientras la detección de objetos esté activa
+            if self.is_recording:
+                if self.video_writer is not None:
+                    self.video_writer.write(frame)
+
+        # Detener la grabación después de 30 segundos sin movimiento
+        if self.is_recording:
+            time_since_start = (datetime.now() - self.start_time).total_seconds()
+            if time_since_start >= self.record_duration:
+                self.is_recording = False
+                if self.video_writer is not None:
+                    self.video_writer.release()
+                    self.video_writer = None
+
+    def stop_video(self):
+        """
+            Detiene la grabación de video.
+        """
+        self.timer_running = False
+        if self.video_writer is not None:
+            self.video_writer.release()
+            self.video_writer = None
 
     def view_captures(self):
         """
-            Abre la carpeta que contiene las capturas de los nuevos objetos detectados.
-
-            Utiliza el método `os.startfile()` 
-            para abrir la carpeta en el explorador de archivos del sistema.
+        Abre la carpeta que contiene las capturas de los nuevos objetos detectados.
         """
         os.startfile(os.path.abspath(self.output_directory))
 
     def update_video(self):
         """
-            Actualiza continuamente el marco de video
-            mostrado en la interfaz de usuario.  
-            Captura un nuevo fotograma del video en vivo y
-            lo muestra en el widget de la interfaz gráfica de usuario.
-            Si la detección de objetos está activada,
-            también se ejecuta el método detect_objects para buscar objetos en el fotograma.
+        Actualiza continuamente el marco de video mostrado en la interfaz de usuario.
         """
         for cap, camera_frame in self.cameras:
             if cap is not None:
