@@ -12,7 +12,19 @@ import cv2
 class ObjectDetectionApp:
     """Clase para la aplicación de detección de objetos."""
     def __init__(self, root):
-        """Inicializa la aplicación."""
+        """
+        La función inicializa una aplicación de seguridad con marcos de cámara,
+        botones de control y
+        resta de fondo para la detección de objetos.
+        
+        :param root: El parámetro `root` en el método `__init__`
+        de su código parece referirse al
+        ventana principal de Tkinter o ventana raíz de su aplicación. 
+        Es donde están todos los widgets y marcos.
+        se colocan y se muestran. En el código, está configurando el título,
+        la geometría y el ícono
+        Inicializa la aplicación.
+        """
         self.root = root
         self.root.title("Segurity Chamba")
         self.root.geometry("825x520")
@@ -119,6 +131,9 @@ class ObjectDetectionApp:
 
     def search_cameras(self):
         """Buscar y mostrar cámaras disponibles."""
+        # El código  intenta inicializar hasta 4 transmisiones de cámara usando OpenCV en Python. Él
+        # itera sobre los índices de cámara 0 a 3, intenta capturar un cuadro de cada cámara, y si
+        # es exitoso, crea un widget de etiqueta Tkinter para mostrar la transmisión de la cámara.
         if not self.cameras:
             for i in range(4):
                 cap = cv2.VideoCapture(i)
@@ -162,6 +177,9 @@ class ObjectDetectionApp:
 
     def show_camera(self, frame, camera_frame):
         """Mostrar el fotograma de la cámara en el marco."""
+        # Este bloque de código es responsable de convertir
+        #el fotograma capturado por la cámara a un
+        # formato que se puede mostrar en un widget de etiqueta Tkinter.
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame = cv2.resize(frame, (423, 227))
         photo = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
