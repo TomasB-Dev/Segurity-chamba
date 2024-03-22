@@ -31,7 +31,7 @@ class ObjectDetectionApp:
 
         self.timer_running = False
         self.start_time = None
-        self.record_duration = 30  # Duración de la grabación en segundos
+        self.record_duration = 30 # Duración de la grabación en segundos
         self.video_writer = None
         self.detector_on = False
         self.is_recording = False
@@ -194,6 +194,8 @@ class ObjectDetectionApp:
             self.image_count += 1
             self.detected_objects[(x, y, w, h)] = now
             winsound.PlaySound("Alarma.wav", winsound.SND_ASYNC)
+
+            self.start_time = datetime.now()
 
             # Iniciar la grabación si no se está grabando actualmente
             if not self.is_recording:
