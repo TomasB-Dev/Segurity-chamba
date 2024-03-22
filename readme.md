@@ -1,36 +1,30 @@
-# Aplicación de detección de movimiento
+# Object Detection and Capture Application
 
-Este módulo contiene la implementación de una aplicación de detección de movimiento que utiliza OpenCV y Tkinter.
+This Python script is designed for motion detection and capture of detected objects using OpenCV library. It provides a graphical user interface (GUI) built with Tkinter for easy interaction and monitoring.
 
-## Descripción
+## Features
+- **Motion Detection**: Utilizes background subtraction and contour detection techniques to detect motion in the video stream.
+- **Object Capture**: Captures frames containing detected objects and saves them to a specified directory.
+- **Real-time Video Feed**: Displays the live video feed from connected cameras on the GUI.
+- **Recording**: Initiates recording when motion is detected, saving the video with timestamps.
+- **User Interface**: Offers buttons for starting and stopping detection, viewing captured images, and accessing contact information.
 
-La aplicación captura un video en tiempo real desde una cámara web y detecta objetos en movimiento en el video utilizando sustracción de fondo y detección de contornos. Además, la aplicación permite guardar capturas de los nuevos objetos detectados en una carpeta específica.
+## Requirements
+- Python 3.x
+- OpenCV (`cv2`)
+- Tkinter
+- PIL (`Image`, `ImageTk`)
+- `winsound` (Windows only)
 
-## Funcionalidades
+## Usage
+1. Ensure all dependencies are installed.
+2. Run the script.
+3. Click on "Buscar Más Cámaras" to search for available cameras.
+4. Once cameras are detected, click on "Iniciar Deteccion" to start motion detection.
+5. Detected objects will be highlighted, and frames containing them will be saved.
+6. Click on "Detener Deteccion" to stop motion detection.
+7. Use "View Captures" to open the directory containing the captured images.
+8. For further assistance or inquiries, click on "Contacto" to visit the provided link.
 
-- **Inicio y detención de la detección de objetos:** La aplicación permite iniciar y detener la detección de objetos en el video en vivo.
-- **Interfaz gráfica de usuario (GUI) interactiva:** Utiliza Tkinter para crear una interfaz gráfica fácil de usar que muestra el video en tiempo real y proporciona botones para controlar la detección de objetos.
-- **Detección de objetos en movimiento:** Utiliza el algoritmo de sustracción de fondo y la detección de contornos para identificar objetos en movimiento en el video.
-- **Guardado de capturas de objetos detectados:** Las capturas de los nuevos objetos detectados se guardan en una carpeta especificada para su posterior revisión.
-
-## Instalación
-
-Antes de ejecutar la aplicación, asegúrate de tener las siguientes dependencias instaladas:
-
-- **OpenCV:** Para el procesamiento de imágenes y la detección de objetos.
-- **Tkinter:** Para la creación de la interfaz gráfica de usuario.
-- **winsound:** (Solo en Windows) Para la reproducción de sonidos al detectar movimiento.
-
-Puedes instalar las dependencias utilizando pip:
-
-```bash
-pip install opencv-python
-```
-
-## Uso
-
-Para ejecutar la aplicación, simplemente ejecuta el archivo `Main.py`. Esto iniciará la aplicación y abrirá una ventana que muestra el video en tiempo real de tu cámara web.
-
-- Haz clic en el botón "Start Detection" para activar la detección de objetos en movimiento.
-- Haz clic en el botón "Stop Detection" para detener la detección de objetos.
-- Haz clic en el botón "View Captures" para abrir la carpeta que contiene las capturas de los nuevos objetos detectados.
+## Contact
+For support or inquiries, please visit our [Discord server](https://discord.gg/6kfbMJXKRy).
