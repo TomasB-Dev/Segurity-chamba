@@ -3,8 +3,8 @@
 This Python script is designed for motion detection and capture of detected objects using OpenCV library. It provides a graphical user interface (GUI) built with Tkinter for easy interaction and monitoring.
 
 For other languages:
-- Para obtener la documentación en español, consulte [Readme_Spanish.md](Readme_Spanish.md).
-- Para a documentação em português, consulte [Readme_Portuguese.md](Readme_Portuguese.md).
+- Para obtener la documentación en español, consulte [Readme Español](Readme_Spanish.md).
+- Para a documentação em português, consulte [Readme Portuguese](Readme_Portuguese.md).
 
 ## Features
 - **Motion Detection**: Utilizes background subtraction and contour detection techniques to detect motion in the video stream.
